@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+  <meta charset="UTF-8">
+  <title>Login</title>
+  <!-- Bootstrap 5 CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+
+</head>
+<body>
+<br /><br />
+<div class="container">
+  <div class="row">
+    <div class="col-md-6 offset-md-3">
+
+      <div class="card">
+
+        <h2 class="text-center rounded p-2 m-2 bg-success">Login</h2>
+
+        <div class="card-body">
+          <form
+                  method="post"
+                  role="form"
+                  th:action="@{/login}"
+                  class="form-horizontal"
+          >
+            <div class="form-group mb-3">
+              <label class="control-label"> Username</label>
+              <input
+                      type="username"
+                      id="username"
+                      name="username"
+                      class="form-control"
+                      placeholder="Enter username"
+                      required
+              />
+            </div>
+
+            <div class="form-group mb-3">
+              <label class="control-label"> Password</label>
+              <input
+                      type="password"
+                      id="password"
+                      name="password"
+                      class="form-control"
+                      placeholder="Enter password"
+                      required
+              />
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
