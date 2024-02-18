@@ -1,5 +1,6 @@
 package com.nnk.springboot.domain;
 
+import com.nnk.springboot.annotations.ValidPassword;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,6 +19,8 @@ public class User implements UserDetails {
     private int id;
     @NotBlank(message = "Username is mandatory")
     private String username;
+
+    @ValidPassword
     @NotBlank(message = "Password is mandatory")
     private String password;
     @NotBlank(message = "FullName is mandatory")
