@@ -30,4 +30,5 @@ public class RuleNameService {
     public void deleteById(int id){
         ruleNameRepository.deleteById(id);
     }
+
 }

@@ -32,4 +32,6 @@ public class CurvePointService {
     public void deleteById(int id) {
         curvePointRepository.deleteById(id);
     }
+
+
 }

@@ -29,4 +29,6 @@ public class RatingService {
     public void deleteById(int id){
         ratingRepository.deleteById(id);
     }
+
+
 }
