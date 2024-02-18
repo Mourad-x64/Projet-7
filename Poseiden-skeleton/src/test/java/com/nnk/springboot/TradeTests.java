@@ -3,10 +3,12 @@ package com.nnk.springboot;
 import com.nnk.springboot.domain.Trade;
 import com.nnk.springboot.repositories.TradeRepository;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
@@ -14,10 +16,16 @@ import java.util.Optional;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@ActiveProfiles(profiles = "test")
 public class TradeTests {
 
 	@Autowired
 	private TradeRepository tradeRepository;
+
+	@Before
+	public void cleanDb(){
+		tradeRepository.deleteAll();
+	}
 
 	@Test
 	public void tradeTest() {
@@ -28,7 +36,7 @@ public class TradeTests {
 
 		// Save
 		trade = tradeRepository.save(trade);
-		Assert.assertNotNull(trade.gettradeId());
+		Assert.assertNotNull(trade.getTradeId());
 		Assert.assertTrue(trade.getAccount().equals("Trade Account"));
 
 		// Update
@@ -41,7 +49,7 @@ public class TradeTests {
 		Assert.assertTrue(listResult.size() > 0);
 
 		// Delete
-		Integer id = trade.gettradeId();
+		Integer id = trade.getTradeId();
 		tradeRepository.delete(trade);
 		Optional<Trade> tradeList = tradeRepository.findById(id);
 		Assert.assertFalse(tradeList.isPresent());

@@ -3,10 +3,12 @@ package com.nnk.springboot;
 import com.nnk.springboot.domain.RuleName;
 import com.nnk.springboot.repositories.RuleNameRepository;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
@@ -14,10 +16,16 @@ import java.util.Optional;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@ActiveProfiles(profiles = "test")
 public class RuleTests {
 
 	@Autowired
 	private RuleNameRepository ruleNameRepository;
+
+	@Before
+	public void cleanDb(){
+		ruleNameRepository.deleteAll();
+	}
 
 	@Test
 	public void ruleTest() {
@@ -32,7 +40,7 @@ public class RuleTests {
 
 		// Save
 		rule = ruleNameRepository.save(rule);
-		Assert.assertNotNull(rule.getId());
+		Assert.assertNotNull(rule.getRuleNameId());
 		Assert.assertTrue(rule.getName().equals("Rule Name"));
 
 		// Update
@@ -45,7 +53,7 @@ public class RuleTests {
 		Assert.assertTrue(listResult.size() > 0);
 
 		// Delete
-		Integer id = rule.getId();
+		Integer id = rule.getRuleNameId();
 		ruleNameRepository.delete(rule);
 		Optional<RuleName> ruleList = ruleNameRepository.findById(id);
 		Assert.assertFalse(ruleList.isPresent());
