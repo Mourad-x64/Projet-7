@@ -16,7 +16,7 @@ import java.util.List;
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-    private int id;
+    private int userId;
     @NotBlank(message = "Username is mandatory")
     private String username;
 
@@ -28,12 +28,12 @@ public class User implements UserDetails {
     @NotBlank(message = "Role is mandatory")
     private String role;
 
-    public int getId() {
-        return id;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public String getUsername() {

@@ -56,7 +56,7 @@ public class BidServiceTests {
 		BidList newBidlist;
 		if (bidList1.isPresent()){
 			newBidlist = bidList1.get();
-			Assert.assertEquals(bid.getBidListId(), id, id);
+			Assert.assertEquals(newBidlist.getBidListId(), id, id);
 		}
 
 		// Delete
