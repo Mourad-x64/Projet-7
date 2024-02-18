@@ -1,5 +1,7 @@
 package com.nnk.springboot.config;
 
+import com.nnk.springboot.services.CustomUserDetailsService;
+import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +16,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
+@EnableEncryptableProperties
 public class SecurityConfiguration {
 
     @Autowired
@@ -32,22 +35,27 @@ public class SecurityConfiguration {
         http.authorizeHttpRequests((authorize) ->
                         authorize
                                 .requestMatchers("/static/**", "/templates/**").permitAll()
-                                .requestMatchers("/", "/home.html").permitAll()
-                                //.requestMatchers("/admin/home").hasRole("ADMIN")
+                                .requestMatchers("/", "/home").permitAll()
+                                .requestMatchers("/admin/home").hasRole("ADMIN")
+                                .requestMatchers("/user/**").permitAll()
                                 .anyRequest().authenticated()
+
 
                 )
                 .formLogin(
                         form -> form
                                 .loginPage("/login")
+                                .defaultSuccessUrl("/bidList/list", true)
                                 .loginProcessingUrl("/login")
-                                //.successHandler(new CustomAuthenticationSuccessHandler())
                                 .permitAll()
-                ).logout(
+
+                )
+                .logout(
                         logout -> logout
                                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                                 .permitAll()
                 );
+
 
 
 

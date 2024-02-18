@@ -30,7 +30,7 @@ public class RatingTests {
 
 		// Save
 		rating = ratingRepository.save(rating);
-		Assert.assertNotNull(rating.getId());
+		Assert.assertNotNull(rating.getRatingId());
 		Assert.assertTrue(rating.getOrderNumber() == 10);
 
 		// Update
@@ -43,7 +43,7 @@ public class RatingTests {
 		Assert.assertTrue(listResult.size() > 0);
 
 		// Delete
-		Integer id = rating.getId();
+		Integer id = rating.getRatingId();
 		ratingRepository.delete(rating);
 		Optional<Rating> ratingList = ratingRepository.findById(id);
 		Assert.assertFalse(ratingList.isPresent());

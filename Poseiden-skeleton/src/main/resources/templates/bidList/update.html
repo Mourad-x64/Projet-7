@@ -8,6 +8,9 @@
 </head>
 <body>
 <div class="container">
+	<div class="row" th:if="${param.error}">
+		<h2>Error bidlist not saved !</h2>
+	</div>
 	<div class="row">
 		<h2>Update Bid</h2>
 	</div>
@@ -39,7 +42,6 @@
 
 			<div class="form-group">
 				<div class="col-sm-12">
-					<input type="hidden" th:field="*{id}">
 					<a class="btn btn-danger btn-sm" href="/bidList/list">Cancel</a>
 					<input class="btn btn-primary btn-sm" type="submit" value="Update Bid List">
 				</div>

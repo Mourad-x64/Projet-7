@@ -9,7 +9,7 @@ public class RuleName {
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-    private Integer id;
+    private int ruleNameId;
 
     private String name;
     private String description;
@@ -18,12 +18,12 @@ public class RuleName {
     private String sqlStr;
     private String sqlPart;
 
-    public Integer getId() {
-        return id;
+    public int getRuleNameId() {
+        return ruleNameId;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setRuleNameId(int id) {
+        this.ruleNameId = id;
     }
 
     public String getName() {

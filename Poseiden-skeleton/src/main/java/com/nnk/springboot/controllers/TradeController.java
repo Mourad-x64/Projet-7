@@ -1,7 +1,10 @@
 package com.nnk.springboot.controllers;
 
+import com.nnk.springboot.domain.BidList;
 import com.nnk.springboot.domain.Trade;
+import com.nnk.springboot.services.TradeService;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -10,16 +13,23 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+
 //import javax.validation.Valid;
 
 @Controller
 public class TradeController {
-    // TODO: Inject Trade service
+    @Autowired
+    TradeService tradeService;
 
     @RequestMapping("/trade/list")
     public String home(Model model)
     {
-        // TODO: find all Trade, add to model
+        List<Trade> trades = tradeService.findAll();
+
+        model.addAttribute("trades", trades);
         return "trade/list";
     }
 
@@ -30,26 +40,44 @@ public class TradeController {
 
     @PostMapping("/trade/validate")
     public String validate(@Valid Trade trade, BindingResult result, Model model) {
-        // TODO: check data valid and save to db, after saving return Trade list
-        return "trade/add";
+        if(result.hasErrors()){
+            return "redirect:/trade/add?error";
+        }
+
+        tradeService.save(trade);
+        return "redirect:/trade/list";
     }
 
     @GetMapping("/trade/update/{id}")
-    public String showUpdateForm(@PathVariable("id") Integer id, Model model) {
-        // TODO: get Trade by Id and to model then show to the form
+    public String showUpdateForm(@PathVariable("id") int id, Model model) {
+        Optional<Trade> opt = tradeService.findById(id);
+        if(opt.isPresent()){
+            model.addAttribute("trade", opt.get());
+        }else {
+            throw new NoSuchElementException("trade not found");
+        }
         return "trade/update";
     }
 
     @PostMapping("/trade/update/{id}")
-    public String updateTrade(@PathVariable("id") Integer id, @Valid Trade trade,
+    public String updateTrade(@PathVariable("id") int id, @Valid Trade trade,
                              BindingResult result, Model model) {
-        // TODO: check required fields, if valid call service to update Trade and return Trade list
+        if(result.hasErrors()){
+            return "redirect:/trade/update?error";
+        }
+        trade.setTradeId(id);
+        tradeService.save(trade);
         return "redirect:/trade/list";
     }
 
     @GetMapping("/trade/delete/{id}")
-    public String deleteTrade(@PathVariable("id") Integer id, Model model) {
-        // TODO: Find Trade by Id and delete the Trade, return to Trade list
+    public String deleteTrade(@PathVariable("id") int id, Model model) {
+        Optional<Trade> opt = tradeService.findById(id);
+        if(opt.isPresent()){
+            tradeService.deleteById(id);
+        }else {
+            throw new IllegalArgumentException("invalid trade id : "+id);
+        }
         return "redirect:/trade/list";
     }
 }

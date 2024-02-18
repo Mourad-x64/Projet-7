@@ -11,31 +11,19 @@ public class CurvePoint {
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-    private Integer id;
-
-    private Integer CurveId;
-
+    private int curvePointId;
     private Timestamp asOfDate;
     private Double term;
     private Double value;
     private Timestamp creationDate;
 
 
-    public Integer getId() {
-        return id;
+    public int getCurvePointId() {
+        return curvePointId;
     }
 
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Integer getCurveId() {
-        return CurveId;
-    }
-
-    public void setCurveId(Integer curveId) {
-        CurveId = curveId;
+    public void setCurvePointId(int id) {
+        this.curvePointId = id;
     }
 
     public Timestamp getAsOfDate() {

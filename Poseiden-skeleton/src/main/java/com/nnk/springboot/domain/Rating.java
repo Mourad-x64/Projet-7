@@ -9,19 +9,19 @@ public class Rating {
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-    private Integer id;
+    private int ratingId;
 
     private String moodysRating;
     private String sandPRating;
     private String fitchRating;
     private Integer orderNumber;
 
-    public Integer getId() {
-        return id;
+    public int getRatingId() {
+        return ratingId;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setRatingId(int ratingId) {
+        this.ratingId = ratingId;
     }
 
     public String getMoodysRating() {
