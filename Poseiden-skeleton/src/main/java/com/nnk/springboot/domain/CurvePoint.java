@@ -10,7 +10,7 @@ import java.security.Timestamp;
 public class CurvePoint {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy= GenerationType.AUTO)
     private int curvePointId;
     private Timestamp asOfDate;
     private Double term;

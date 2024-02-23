@@ -1,10 +1,16 @@
 package com.nnk.springboot;
 
 import com.nnk.springboot.domain.BidList;
+import com.nnk.springboot.domain.CurvePoint;
+import com.nnk.springboot.domain.Rating;
 import com.nnk.springboot.domain.User;
 import com.nnk.springboot.repositories.BidListRepository;
+import com.nnk.springboot.repositories.CurvePointRepository;
+import com.nnk.springboot.repositories.RatingRepository;
 import com.nnk.springboot.repositories.UserRepository;
 import com.nnk.springboot.services.BidListService;
+import com.nnk.springboot.services.CurvePointService;
+import com.nnk.springboot.services.RatingService;
 import com.nnk.springboot.services.UserService;
 import org.junit.Assert;
 import org.junit.Before;
@@ -17,7 +23,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,27 +38,27 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles(profiles = "test")
-public class BidListControllerTests {
+public class RatingControllerTests {
 
     @Autowired
-    BidListRepository bidListRepository;
+    RatingRepository ratingRepository;
     @Autowired
     UserRepository userRepository;
     @Autowired
     UserService userService;
     @Autowired
-    BidListService bidListService;
+    RatingService ratingService;
     @Autowired
     PasswordEncoder passwordEncoder;
     @Autowired
     private MockMvc mvc;
 
-    private BidList bidList;
+    private Rating rating;
 
     @Before
     public void cleanDb(){
         userRepository.deleteAll();
-        bidListRepository.deleteAll();
+        ratingRepository.deleteAll();
 
         User user = new User();
         user .setFullname("titi");
@@ -63,25 +68,17 @@ public class BidListControllerTests {
 
         userService.save(user);
 
-        BidList bid = new BidList();
-        bid.setAccount("account test");
-        bid.setBidQuantity(20d);
+        Rating rating = new Rating();
+        rating.setMoodysRating("A");
+        rating.setSandPRating("B");
+        rating.setFitchRating("C");
 
-        this.bidList = bidListService.save(bid);
+        this.rating = ratingService.save(rating);
     }
 
     @Test
-    public void showBidListTest() throws Exception {
-        mvc.perform(get("/bidList/list")
-                        .with(user("titi").password("Password_1").roles("USER","ADMIN"))
-                        .with(csrf())
-                ).andExpect(status().isOk());
-
-    }
-
-    @Test
-    public void showBidListAddTest() throws Exception {
-        mvc.perform(get("/bidList/add")
+    public void showRatingListTest() throws Exception {
+        mvc.perform(get("/rating/list")
                 .with(user("titi").password("Password_1").roles("USER","ADMIN"))
                 .with(csrf())
         ).andExpect(status().isOk());
@@ -89,8 +86,8 @@ public class BidListControllerTests {
     }
 
     @Test
-    public void showBidListUpdateTest() throws Exception {
-        mvc.perform(get("/bidList/update/"+bidList.getBidListId())
+    public void showRatingAddTest() throws Exception {
+        mvc.perform(get("/rating/add")
                 .with(user("titi").password("Password_1").roles("USER","ADMIN"))
                 .with(csrf())
         ).andExpect(status().isOk());
@@ -98,55 +95,66 @@ public class BidListControllerTests {
     }
 
     @Test
-    public void deleteBidListTest() throws Exception {
-
-        mvc.perform(get("/bidList/delete/"+bidList.getBidListId())
+    public void showRatingUpdateTest() throws Exception {
+        mvc.perform(get("/rating/update/"+rating.getRatingId())
                 .with(user("titi").password("Password_1").roles("USER","ADMIN"))
                 .with(csrf())
-        ).andExpect(redirectedUrl("/bidList/list"));
+        ).andExpect(status().isOk());
 
-        Optional<BidList> listResult = bidListService.findById(bidList.getBidListId());
+    }
+
+    @Test
+    public void deleteRatingTest() throws Exception {
+
+        mvc.perform(get("/rating/delete/"+rating.getRatingId())
+                .with(user("titi").password("Password_1").roles("USER","ADMIN"))
+                .with(csrf())
+        ).andExpect(redirectedUrl("/rating/list"));
+
+        Optional<Rating> listResult = ratingService.findById(rating.getRatingId());
         Assert.assertFalse(listResult.isPresent());
 
     }
 
     @Test
-    public void addBidListTest() throws Exception {
+    public void addRatingTest() throws Exception {
 
-        mvc.perform(post("/bidList/validate")
+        mvc.perform(post("/rating/validate")
                 .with(user("titi").password("Password_1").roles("USER","ADMIN"))
-                .param("account", "account test")
-                .param("type", "type test")
-                .param("bidQuantity", "20")
-                .with(csrf())
-        ).andExpect(redirectedUrl("/bidList/list"));
+                .param("moodysRating", "50")
+                .param("sandPRating", "40")
+                .param("fitchRating", "70")
 
-        List<BidList> listResult = bidListService.findAll();
+                .with(csrf())
+        ).andExpect(redirectedUrl("/rating/list"));
+
+        List<Rating> listResult = ratingService.findAll();
         Assert.assertTrue(listResult.size() > 0);
 
     }
 
     @Test
-    public void updateBidListTest() throws Exception {
+    public void updateRatingTest() throws Exception {
 
-        BidList bid = new BidList();
-        bid.setAccount("account test");
-        bid.setBidQuantity(20d);
+        Rating rating = new Rating();
+        rating.setMoodysRating("A");
+        rating.setSandPRating("B");
+        rating.setFitchRating("C");
 
-        BidList bidList1 = bidListService.save(bid);
+        Rating rating1 = ratingService.save(rating);
 
 
-        mvc.perform(post("/bidList/update/"+bidList1.getBidListId())
+        mvc.perform(post("/rating/update/"+rating1.getRatingId())
                 .with(user("titi").password("Password_1").roles("USER","ADMIN"))
-                .param("account", "account test")
-                .param("type", "type test")
-                .param("bidQuantity", "40")
+                .param("moodysRating", "B")
+                .param("sandPRating", "AA")
+                .param("fitchRating", "C")
                 .with(csrf())
-        ).andExpect(redirectedUrl("/bidList/list"));
+        ).andExpect(redirectedUrl("/rating/list"));
 
-        Optional<BidList> bidList2 = bidListService.findById(bidList1.getBidListId());
-        if(bidList2.isPresent()){
-            Assert.assertEquals(40d, bidList2.get().getBidQuantity(), 40d);
+        Optional<Rating> rating2 = ratingService.findById(rating1.getRatingId());
+        if(rating2.isPresent()){
+            Assert.assertEquals("AA", rating2.get().getSandPRating());
         }
 
     }

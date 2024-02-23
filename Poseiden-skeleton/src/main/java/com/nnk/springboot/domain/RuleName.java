@@ -8,7 +8,7 @@ import jakarta.persistence.*;
 public class RuleName {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy= GenerationType.AUTO)
     private int ruleNameId;
 
     private String name;

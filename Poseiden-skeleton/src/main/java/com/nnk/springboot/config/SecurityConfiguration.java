@@ -14,6 +14,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+/**
+ *
+ */
 @Configuration
 @EnableWebSecurity
 @EnableEncryptableProperties
@@ -27,7 +30,12 @@ public class SecurityConfiguration {
         return new BCryptPasswordEncoder();
     }
 
-
+    /**
+     *
+     * @param http
+     * @return
+     * @throws Exception
+     */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
@@ -36,8 +44,8 @@ public class SecurityConfiguration {
                         authorize
                                 .requestMatchers("/static/**", "/templates/**").permitAll()
                                 .requestMatchers("/", "/home").permitAll()
-                                .requestMatchers("/admin/home").hasRole("ADMIN")
-                                .requestMatchers("/user/**").permitAll()
+                                .requestMatchers("/admin").hasRole("ADMIN")
+                                .requestMatchers("/user/**").hasRole("ADMIN")
                                 .anyRequest().authenticated()
 
 
@@ -47,6 +55,7 @@ public class SecurityConfiguration {
                                 .loginPage("/login")
                                 .defaultSuccessUrl("/bidList/list", true)
                                 .loginProcessingUrl("/login")
+                                .successHandler(new CustomAuthenticationSuccessHandler())
                                 .permitAll()
 
                 )
@@ -55,8 +64,6 @@ public class SecurityConfiguration {
                                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                                 .permitAll()
                 );
-
-
 
 
         return http.build();

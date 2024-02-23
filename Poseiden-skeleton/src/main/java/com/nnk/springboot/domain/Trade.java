@@ -10,7 +10,7 @@ import java.security.Timestamp;
 public class Trade {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy= GenerationType.AUTO)
     private int tradeId;
 
     private String account;

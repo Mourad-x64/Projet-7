@@ -10,7 +10,7 @@ import java.security.Timestamp;
 public class BidList {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy= GenerationType.AUTO)
     private int bidListId;
 
     private String account;

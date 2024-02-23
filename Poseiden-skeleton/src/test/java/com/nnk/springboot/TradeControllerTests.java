@@ -1,11 +1,8 @@
 package com.nnk.springboot;
 
-import com.nnk.springboot.domain.BidList;
-import com.nnk.springboot.domain.User;
-import com.nnk.springboot.repositories.BidListRepository;
-import com.nnk.springboot.repositories.UserRepository;
-import com.nnk.springboot.services.BidListService;
-import com.nnk.springboot.services.UserService;
+import com.nnk.springboot.domain.*;
+import com.nnk.springboot.repositories.*;
+import com.nnk.springboot.services.*;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,7 +14,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,27 +29,27 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles(profiles = "test")
-public class BidListControllerTests {
+public class TradeControllerTests {
 
     @Autowired
-    BidListRepository bidListRepository;
+    TradeRepository tradeRepository;
     @Autowired
     UserRepository userRepository;
     @Autowired
     UserService userService;
     @Autowired
-    BidListService bidListService;
+    TradeService tradeService;
     @Autowired
     PasswordEncoder passwordEncoder;
     @Autowired
     private MockMvc mvc;
 
-    private BidList bidList;
+    private Trade trade;
 
     @Before
     public void cleanDb(){
         userRepository.deleteAll();
-        bidListRepository.deleteAll();
+        tradeRepository.deleteAll();
 
         User user = new User();
         user .setFullname("titi");
@@ -63,25 +59,17 @@ public class BidListControllerTests {
 
         userService.save(user);
 
-        BidList bid = new BidList();
-        bid.setAccount("account test");
-        bid.setBidQuantity(20d);
+        Trade trade = new Trade();
+        trade.setAccount("account test");
+        trade.setType("type test");
+        trade.setBuyQuantity(70d);
 
-        this.bidList = bidListService.save(bid);
+        this.trade = tradeService.save(trade);
     }
 
     @Test
-    public void showBidListTest() throws Exception {
-        mvc.perform(get("/bidList/list")
-                        .with(user("titi").password("Password_1").roles("USER","ADMIN"))
-                        .with(csrf())
-                ).andExpect(status().isOk());
-
-    }
-
-    @Test
-    public void showBidListAddTest() throws Exception {
-        mvc.perform(get("/bidList/add")
+    public void showTradeListTest() throws Exception {
+        mvc.perform(get("/trade/list")
                 .with(user("titi").password("Password_1").roles("USER","ADMIN"))
                 .with(csrf())
         ).andExpect(status().isOk());
@@ -89,8 +77,8 @@ public class BidListControllerTests {
     }
 
     @Test
-    public void showBidListUpdateTest() throws Exception {
-        mvc.perform(get("/bidList/update/"+bidList.getBidListId())
+    public void showTradeAddTest() throws Exception {
+        mvc.perform(get("/trade/add")
                 .with(user("titi").password("Password_1").roles("USER","ADMIN"))
                 .with(csrf())
         ).andExpect(status().isOk());
@@ -98,55 +86,67 @@ public class BidListControllerTests {
     }
 
     @Test
-    public void deleteBidListTest() throws Exception {
-
-        mvc.perform(get("/bidList/delete/"+bidList.getBidListId())
+    public void showTradeUpdateTest() throws Exception {
+        mvc.perform(get("/trade/update/"+trade.getTradeId())
                 .with(user("titi").password("Password_1").roles("USER","ADMIN"))
                 .with(csrf())
-        ).andExpect(redirectedUrl("/bidList/list"));
+        ).andExpect(status().isOk());
 
-        Optional<BidList> listResult = bidListService.findById(bidList.getBidListId());
+    }
+
+    @Test
+    public void deleteTradeTest() throws Exception {
+
+        mvc.perform(get("/trade/delete/"+trade.getTradeId())
+                .with(user("titi").password("Password_1").roles("USER","ADMIN"))
+                .with(csrf())
+        ).andExpect(redirectedUrl("/trade/list"));
+
+        Optional<Trade> listResult = tradeService.findById(trade.getTradeId());
         Assert.assertFalse(listResult.isPresent());
 
     }
 
-    @Test
-    public void addBidListTest() throws Exception {
 
-        mvc.perform(post("/bidList/validate")
+    @Test
+    public void addTradeTest() throws Exception {
+
+        mvc.perform(post("/trade/validate")
                 .with(user("titi").password("Password_1").roles("USER","ADMIN"))
                 .param("account", "account test")
                 .param("type", "type test")
-                .param("bidQuantity", "20")
-                .with(csrf())
-        ).andExpect(redirectedUrl("/bidList/list"));
+                .param("BuyQuantity", "70")
 
-        List<BidList> listResult = bidListService.findAll();
+                .with(csrf())
+        ).andExpect(redirectedUrl("/trade/list"));
+
+        List<Trade> listResult = tradeService.findAll();
         Assert.assertTrue(listResult.size() > 0);
 
     }
 
     @Test
-    public void updateBidListTest() throws Exception {
+    public void updateTradeTest() throws Exception {
 
-        BidList bid = new BidList();
-        bid.setAccount("account test");
-        bid.setBidQuantity(20d);
+        Trade trade = new Trade();
+        trade.setAccount("account test");
+        trade.setType("type test");
+        trade.setBuyQuantity(70d);
 
-        BidList bidList1 = bidListService.save(bid);
+        Trade trade1 = tradeService.save(trade);
 
 
-        mvc.perform(post("/bidList/update/"+bidList1.getBidListId())
+        mvc.perform(post("/trade/update/"+trade1.getTradeId())
                 .with(user("titi").password("Password_1").roles("USER","ADMIN"))
                 .param("account", "account test")
                 .param("type", "type test")
-                .param("bidQuantity", "40")
+                .param("BuyQuantity", "90")
                 .with(csrf())
-        ).andExpect(redirectedUrl("/bidList/list"));
+        ).andExpect(redirectedUrl("/trade/list"));
 
-        Optional<BidList> bidList2 = bidListService.findById(bidList1.getBidListId());
-        if(bidList2.isPresent()){
-            Assert.assertEquals(40d, bidList2.get().getBidQuantity(), 40d);
+        Optional<Trade> trade2 = tradeService.findById(trade1.getTradeId());
+        if(trade2.isPresent()){
+            Assert.assertEquals(90d, trade2.get().getBuyQuantity(), 90d);
         }
 
     }
