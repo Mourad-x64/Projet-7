@@ -44,7 +44,7 @@ public class BidListController {
     @PostMapping("/bidList/validate")
     public String validate(@Valid BidList bid, BindingResult result, Model model) {
         if(result.hasErrors()){
-            return "redirect:/bidList/add?error";
+            return "bidList/add";
         }
 
         bidListService.save(bid);
@@ -66,7 +66,7 @@ public class BidListController {
     public String updateBid(@PathVariable("id") int id, @Valid BidList bidList,
                              BindingResult result, Model model) {
         if(result.hasErrors()){
-            return "redirect:/bidList/update?error";
+            return "bidList/update";
         }
         bidList.setBidListId(id);
         bidListService.save(bidList);

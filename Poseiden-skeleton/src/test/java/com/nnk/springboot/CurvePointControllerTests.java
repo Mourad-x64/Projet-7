@@ -1,12 +1,9 @@
 package com.nnk.springboot;
 
-import com.nnk.springboot.domain.BidList;
 import com.nnk.springboot.domain.CurvePoint;
 import com.nnk.springboot.domain.User;
-import com.nnk.springboot.repositories.BidListRepository;
 import com.nnk.springboot.repositories.CurvePointRepository;
 import com.nnk.springboot.repositories.UserRepository;
-import com.nnk.springboot.services.BidListService;
 import com.nnk.springboot.services.CurvePointService;
 import com.nnk.springboot.services.UserService;
 import org.junit.Assert;
@@ -20,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.List;
 import java.util.Optional;
@@ -35,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles(profiles = "test")
-public class CurveControllerTests {
+public class CurvePointControllerTests {
 
     @Autowired
     CurvePointRepository curvePointRepository;
@@ -115,16 +113,23 @@ public class CurveControllerTests {
     @Test
     public void addCurvePointTest() throws Exception {
 
+        //error
+        mvc.perform(post("/curvePoint/validate")
+                .with(user("titi").password("Password_1").roles("USER","ADMIN"))
+                .param("term", "50")
+                .with(csrf())
+        ).andExpect(MockMvcResultMatchers.view().name("curvePoint/add"));
+
+        //ok
         mvc.perform(post("/curvePoint/validate")
                 .with(user("titi").password("Password_1").roles("USER","ADMIN"))
                 .param("term", "50")
                 .param("value", "20")
-
                 .with(csrf())
         ).andExpect(redirectedUrl("/curvePoint/list"));
 
         List<CurvePoint> listResult = curvePointService.findAll();
-        Assert.assertTrue(listResult.size() > 0);
+        Assert.assertTrue(listResult.size() == 2);
 
     }
 
@@ -137,7 +142,14 @@ public class CurveControllerTests {
 
         CurvePoint curve1 = curvePointService.save(curve);
 
+        //error
+        mvc.perform(post("/curvePoint/update/"+curve1.getCurvePointId())
+                .with(user("titi").password("Password_1").roles("USER","ADMIN"))
+                .param("term", "50")
+                .with(csrf())
+        ).andExpect(MockMvcResultMatchers.view().name("curvePoint/update"));
 
+        //ok
         mvc.perform(post("/curvePoint/update/"+curve1.getCurvePointId())
                 .with(user("titi").password("Password_1").roles("USER","ADMIN"))
                 .param("term", "60")

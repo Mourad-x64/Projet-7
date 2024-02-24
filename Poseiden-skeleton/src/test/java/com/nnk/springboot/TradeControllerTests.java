@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.List;
 import java.util.Optional;
@@ -111,17 +112,25 @@ public class TradeControllerTests {
     @Test
     public void addTradeTest() throws Exception {
 
+        //error
+        mvc.perform(post("/trade/validate")
+                .with(user("titi").password("Password_1").roles("USER","ADMIN"))
+                .param("account", "account test")
+                .param("type", "type test")
+                .with(csrf())
+        ).andExpect(MockMvcResultMatchers.view().name("trade/add"));
+
+        //ok
         mvc.perform(post("/trade/validate")
                 .with(user("titi").password("Password_1").roles("USER","ADMIN"))
                 .param("account", "account test")
                 .param("type", "type test")
                 .param("BuyQuantity", "70")
-
                 .with(csrf())
         ).andExpect(redirectedUrl("/trade/list"));
 
         List<Trade> listResult = tradeService.findAll();
-        Assert.assertTrue(listResult.size() > 0);
+        Assert.assertTrue(listResult.size() == 2);
 
     }
 
@@ -135,7 +144,15 @@ public class TradeControllerTests {
 
         Trade trade1 = tradeService.save(trade);
 
+        //error
+        mvc.perform(post("/trade/update/"+trade1.getTradeId())
+                .with(user("titi").password("Password_1").roles("USER","ADMIN"))
+                .param("account", "account test")
+                .param("type", "type test")
+                .with(csrf())
+        ).andExpect(MockMvcResultMatchers.view().name("trade/update"));
 
+        //ok
         mvc.perform(post("/trade/update/"+trade1.getTradeId())
                 .with(user("titi").password("Password_1").roles("USER","ADMIN"))
                 .param("account", "account test")

@@ -18,7 +18,7 @@ import java.util.Optional;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @ActiveProfiles(profiles = "test")
-public class RuleServiceTests {
+public class RuleNameServiceTests {
 
 	@Autowired
 	private RuleNameRepository ruleNameRepository;

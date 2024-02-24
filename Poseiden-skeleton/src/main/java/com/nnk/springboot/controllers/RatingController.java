@@ -43,7 +43,7 @@ public class RatingController {
     @PostMapping("/rating/validate")
     public String validate(@Valid Rating rating, BindingResult result, Model model) {
         if(result.hasErrors()){
-            return "redirect:/rating/add?error";
+            return "rating/add";
         }
 
         ratingService.save(rating);
@@ -65,7 +65,7 @@ public class RatingController {
     public String updateRating(@PathVariable("id") int id, @Valid Rating rating,
                              BindingResult result, Model model) {
         if(result.hasErrors()){
-            return "redirect:/rating/update?error";
+            return "rating/update";
         }
         rating.setRatingId(id);
         ratingService.save(rating);

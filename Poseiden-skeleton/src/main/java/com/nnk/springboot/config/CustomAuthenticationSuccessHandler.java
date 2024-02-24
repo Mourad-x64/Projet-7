@@ -10,12 +10,28 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import java.io.IOException;
 import java.util.Collection;
 
+/**
+ * Class for redirecting users after login success.
+ */
 public class CustomAuthenticationSuccessHandler implements org.springframework.security.web.authentication.AuthenticationSuccessHandler {
     SimpleUrlAuthenticationSuccessHandler userSuccessHandler =
             new SimpleUrlAuthenticationSuccessHandler("/bidList/list");
     SimpleUrlAuthenticationSuccessHandler adminSuccessHandler =
             new SimpleUrlAuthenticationSuccessHandler("/admin");
 
+    /**
+     *
+     * Function for redirecting the user to the correct page
+     * after successfully login.
+     * If user has ROLE_ADMIN then redirect to "/admin".
+     * If user has ROLE_USER then redirect to "/bidList/list".
+     *
+     * @param request
+     * @param response
+     * @param authentication
+     * @throws IOException
+     * @throws ServletException
+     */
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {

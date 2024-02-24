@@ -15,6 +15,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 /**
+ * Configuration class for spring security
  *
  */
 @Configuration
@@ -25,12 +26,19 @@ public class SecurityConfiguration {
     @Autowired
     private UserDetailsService userDetailsService;
 
+    /**
+     * Initialize Bean for passwordEncoder (Bcrypt).
+     * @return
+     */
     @Bean
     public static PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     /**
+     * this function is responsible for all the security
+     * (protecting the application URLs, validating submitted username and passwords,
+     * redirecting to the login form, and so on) within the application.
      *
      * @param http
      * @return
@@ -69,6 +77,13 @@ public class SecurityConfiguration {
         return http.build();
     }
 
+    /**
+     * Function to set the password encoder (Bcrypt)
+     * and userDetailService for the custom login in spring security.
+     *
+     * @param auth
+     * @throws Exception
+     */
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
 

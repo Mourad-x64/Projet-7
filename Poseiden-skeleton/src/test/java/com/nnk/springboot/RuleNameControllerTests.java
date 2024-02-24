@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.List;
 import java.util.Optional;
@@ -114,6 +115,18 @@ public class RuleNameControllerTests {
     @Test
     public void addRuleNameTest() throws Exception {
 
+        //error
+        mvc.perform(post("/ruleName/validate")
+                .with(user("titi").password("Password_1").roles("USER","ADMIN"))
+                .param("name", "test name")
+                .param("description", "test name")
+                .param("json", "json test")
+                .param("template", "template test")
+                .param("sqlStr", "sql test")
+                .with(csrf())
+        ).andExpect(MockMvcResultMatchers.view().name("ruleName/add"));
+
+        //ok
         mvc.perform(post("/ruleName/validate")
                 .with(user("titi").password("Password_1").roles("USER","ADMIN"))
                 .param("name", "test name")
@@ -122,12 +135,11 @@ public class RuleNameControllerTests {
                 .param("template", "template test")
                 .param("sqlStr", "sql test")
                 .param("sqlPart", "part test")
-
                 .with(csrf())
         ).andExpect(redirectedUrl("/ruleName/list"));
 
         List<RuleName> listResult = ruleNameService.findAll();
-        Assert.assertTrue(listResult.size() > 0);
+        Assert.assertTrue(listResult.size() == 2);
 
     }
 
@@ -144,7 +156,18 @@ public class RuleNameControllerTests {
 
         RuleName ruleName1 = ruleNameService.save(ruleName);
 
+        //error
+        mvc.perform(post("/ruleName/update/"+ruleName1.getRuleNameId())
+                .with(user("titi").password("Password_1").roles("USER","ADMIN"))
+                .param("name", "test name")
+                .param("description", "description test")
+                .param("json", "json test")
+                .param("template", "template test")
+                .param("sqlStr", "sql test")
+                .with(csrf())
+        ).andExpect(MockMvcResultMatchers.view().name("ruleName/update"));
 
+        //ok
         mvc.perform(post("/ruleName/update/"+ruleName1.getRuleNameId())
                 .with(user("titi").password("Password_1").roles("USER","ADMIN"))
                 .param("name", "test name")

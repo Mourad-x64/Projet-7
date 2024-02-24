@@ -41,7 +41,7 @@ public class TradeController {
     @PostMapping("/trade/validate")
     public String validate(@Valid Trade trade, BindingResult result, Model model) {
         if(result.hasErrors()){
-            return "redirect:/trade/add?error";
+            return "trade/add";
         }
 
         tradeService.save(trade);
@@ -63,7 +63,7 @@ public class TradeController {
     public String updateTrade(@PathVariable("id") int id, @Valid Trade trade,
                              BindingResult result, Model model) {
         if(result.hasErrors()){
-            return "redirect:/trade/update?error";
+            return "trade/update";
         }
         trade.setTradeId(id);
         tradeService.save(trade);

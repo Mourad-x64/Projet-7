@@ -1,20 +1,26 @@
 package com.nnk.springboot;
 
+import com.nnk.springboot.controllers.BidListController;
 import com.nnk.springboot.domain.BidList;
 import com.nnk.springboot.domain.User;
 import com.nnk.springboot.repositories.BidListRepository;
 import com.nnk.springboot.repositories.UserRepository;
 import com.nnk.springboot.services.BidListService;
 import com.nnk.springboot.services.UserService;
+import jakarta.validation.constraints.Null;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -26,8 +32,8 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -65,6 +71,7 @@ public class BidListControllerTests {
 
         BidList bid = new BidList();
         bid.setAccount("account test");
+        bid.setType("type test");
         bid.setBidQuantity(20d);
 
         this.bidList = bidListService.save(bid);
@@ -113,6 +120,15 @@ public class BidListControllerTests {
     @Test
     public void addBidListTest() throws Exception {
 
+        //error
+        mvc.perform(post("/bidList/validate")
+                .with(user("titi").password("Password_1").roles("USER","ADMIN"))
+                .param("account", "account test")
+                .param("type", "type test")
+                .with(csrf())
+        ).andExpect(MockMvcResultMatchers.view().name("bidList/add"));
+
+        //ok
         mvc.perform(post("/bidList/validate")
                 .with(user("titi").password("Password_1").roles("USER","ADMIN"))
                 .param("account", "account test")
@@ -122,7 +138,7 @@ public class BidListControllerTests {
         ).andExpect(redirectedUrl("/bidList/list"));
 
         List<BidList> listResult = bidListService.findAll();
-        Assert.assertTrue(listResult.size() > 0);
+        Assert.assertTrue(listResult.size() == 2);
 
     }
 
@@ -131,11 +147,21 @@ public class BidListControllerTests {
 
         BidList bid = new BidList();
         bid.setAccount("account test");
+        bid.setType("type test");
         bid.setBidQuantity(20d);
 
         BidList bidList1 = bidListService.save(bid);
 
+        //error
+        mvc.perform(post("/bidList/update/"+bidList1.getBidListId())
+                .with(user("titi").password("Password_1").roles("USER","ADMIN"))
+                .param("account", "account test")
+                .param("type", "type test")
+                .with(csrf())
+        ).andExpect(MockMvcResultMatchers.view().name("bidList/update"));
 
+
+        //ok
         mvc.perform(post("/bidList/update/"+bidList1.getBidListId())
                 .with(user("titi").password("Password_1").roles("USER","ADMIN"))
                 .param("account", "account test")

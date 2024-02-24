@@ -1,6 +1,7 @@
 package com.nnk.springboot.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 import java.security.Timestamp;
 
@@ -13,7 +14,9 @@ public class CurvePoint {
     @GeneratedValue(strategy= GenerationType.AUTO)
     private int curvePointId;
     private Timestamp asOfDate;
+    @NotNull(message = "term must be set")
     private Double term;
+    @NotNull(message = "value must be set")
     private Double value;
     private Timestamp creationDate;
 

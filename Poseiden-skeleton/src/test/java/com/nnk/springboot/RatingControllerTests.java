@@ -23,6 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.List;
 import java.util.Optional;
@@ -119,17 +120,25 @@ public class RatingControllerTests {
     @Test
     public void addRatingTest() throws Exception {
 
+        //error
+        mvc.perform(post("/rating/validate")
+                .with(user("titi").password("Password_1").roles("USER","ADMIN"))
+                .param("moodysRating", "50")
+                .param("sandPRating", "40")
+                .with(csrf())
+        ).andExpect(MockMvcResultMatchers.view().name("rating/add"));
+
+        //ok
         mvc.perform(post("/rating/validate")
                 .with(user("titi").password("Password_1").roles("USER","ADMIN"))
                 .param("moodysRating", "50")
                 .param("sandPRating", "40")
                 .param("fitchRating", "70")
-
                 .with(csrf())
         ).andExpect(redirectedUrl("/rating/list"));
 
         List<Rating> listResult = ratingService.findAll();
-        Assert.assertTrue(listResult.size() > 0);
+        Assert.assertTrue(listResult.size() == 2);
 
     }
 
@@ -143,7 +152,15 @@ public class RatingControllerTests {
 
         Rating rating1 = ratingService.save(rating);
 
+        //error
+        mvc.perform(post("/rating/update/"+rating1.getRatingId())
+                .with(user("titi").password("Password_1").roles("USER","ADMIN"))
+                .param("moodysRating", "B")
+                .param("sandPRating", "AA")
+                .with(csrf())
+        ).andExpect(MockMvcResultMatchers.view().name("rating/update"));
 
+        //ok
         mvc.perform(post("/rating/update/"+rating1.getRatingId())
                 .with(user("titi").password("Password_1").roles("USER","ADMIN"))
                 .param("moodysRating", "B")

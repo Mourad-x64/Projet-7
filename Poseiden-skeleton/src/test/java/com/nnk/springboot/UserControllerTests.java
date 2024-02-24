@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.List;
 import java.util.Optional;
@@ -110,18 +111,27 @@ public class UserControllerTests {
     @Test
     public void addUserTest() throws Exception {
 
+        //error
+        mvc.perform(post("/user/validate")
+                .with(user("titi").password("Password_1").roles("USER","ADMIN"))
+                .param("fullname", "user test")
+                .param("password", "Password_1")
+                .param("role", "ROLE_USER")
+                .with(csrf())
+        ).andExpect(MockMvcResultMatchers.view().name("user/add"));
+
+        //ok
         mvc.perform(post("/user/validate")
                 .with(user("titi").password("Password_1").roles("USER","ADMIN"))
                 .param("fullname", "user test")
                 .param("username", "user test")
                 .param("password", "Password_1")
                 .param("role", "ROLE_USER")
-
                 .with(csrf())
         ).andExpect(redirectedUrl("/user/list"));
 
         List<User> listResult = userService.findAll();
-        Assert.assertTrue(listResult.size() > 0);
+        Assert.assertTrue(listResult.size() == 3);
 
     }
 
@@ -136,7 +146,16 @@ public class UserControllerTests {
 
         User user1 = userService.save(user);
 
+        //error
+        mvc.perform(post("/user/update/"+user.getUserId())
+                .with(user("titi").password("Password_1").roles("USER","ADMIN"))
+                .param("fullname", "user test")
+                .param("password", "Password_1")
+                .param("role", "ROLE_USER")
+                .with(csrf())
+        ).andExpect(MockMvcResultMatchers.view().name("user/update"));
 
+        //ok
         mvc.perform(post("/user/update/"+user.getUserId())
                 .with(user("titi").password("Password_1").roles("USER","ADMIN"))
                 .param("fullname", "user test")
