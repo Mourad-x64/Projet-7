@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Projet 7 OpenClassRooms
 
 ## Technical:
@@ -25,3 +26,6 @@ Projet 7 OpenClassRooms
 
 - lancez le projet : serveur sur le port 8080.
 
+=======
+Projet 7 
+>>>>>>> origin/master
